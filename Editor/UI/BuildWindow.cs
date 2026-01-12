@@ -1,10 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Azathrix.Framework.Settings;
+using Editor.Core;
+using Editor.Interfaces;
+using Editor.Steps;
 using UnityEditor;
 using UnityEngine;
+using AndroidBuildType = Editor.Core.AndroidBuildType;
 
-namespace Azathrix.PackFlow
+namespace Editor.UI
 {
     /// <summary>
     /// 管道注册器 - 用于注册构建管道
@@ -414,6 +419,8 @@ namespace Azathrix.PackFlow
 
         private void DrawAppBuildTab()
         {
+            var frameworkSettings = AzathrixFrameworkSettings.Instance;
+
             // 版本设置
             _showVersionSettings = EditorGUILayout.Foldout(_showVersionSettings, "版本设置", true);
             if (_showVersionSettings)
@@ -424,23 +431,27 @@ namespace Azathrix.PackFlow
                 EditorGUILayout.LabelField("当前版本", _appSettings.FullVersion);
                 if (GUILayout.Button("重置", GUILayout.Width(50)))
                 {
-                    _appSettings.buildNumber = 1;
-                    _appSettings.Save();
+                    frameworkSettings.buildNumber = 1;
+                    frameworkSettings.Save();
                 }
                 EditorGUILayout.EndHorizontal();
 
-                _appSettings.versionFormat = EditorGUILayout.TextField("版本格式", _appSettings.versionFormat);
+                EditorGUI.BeginChangeCheck();
+                frameworkSettings.versionFormat = EditorGUILayout.TextField("版本格式", frameworkSettings.versionFormat);
 
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("Major", GUILayout.Width(40));
-                _appSettings.majorVersion = EditorGUILayout.IntField(_appSettings.majorVersion, GUILayout.Width(50));
+                frameworkSettings.majorVersion = EditorGUILayout.IntField(frameworkSettings.majorVersion, GUILayout.Width(50));
                 EditorGUILayout.LabelField("Minor", GUILayout.Width(40));
-                _appSettings.minorVersion = EditorGUILayout.IntField(_appSettings.minorVersion, GUILayout.Width(50));
+                frameworkSettings.minorVersion = EditorGUILayout.IntField(frameworkSettings.minorVersion, GUILayout.Width(50));
                 EditorGUILayout.LabelField("Patch", GUILayout.Width(40));
-                _appSettings.patchVersion = EditorGUILayout.IntField(_appSettings.patchVersion, GUILayout.Width(50));
+                frameworkSettings.patchVersion = EditorGUILayout.IntField(frameworkSettings.patchVersion, GUILayout.Width(50));
                 EditorGUILayout.EndHorizontal();
 
-                _appSettings.buildNumber = EditorGUILayout.IntField("Build Number", _appSettings.buildNumber);
+                frameworkSettings.buildNumber = EditorGUILayout.IntField("Build Number", frameworkSettings.buildNumber);
+                if (EditorGUI.EndChangeCheck())
+                    frameworkSettings.Save();
+
                 _appSettings.autoIncrementBuild = EditorGUILayout.Toggle("构建后自动递增", _appSettings.autoIncrementBuild);
 
                 if (_appSettings.autoIncrementBuild)

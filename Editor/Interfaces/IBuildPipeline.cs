@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using Editor.Core;
 
-namespace Azathrix.PackFlow
+namespace Editor.Interfaces
 {
     /// <summary>
     /// 构建管道接口

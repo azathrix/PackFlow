@@ -1,8 +1,8 @@
-using System;
+using Azathrix.Framework.Settings;
 using UnityEditor;
 using UnityEngine;
 
-namespace Azathrix.PackFlow
+namespace Editor.Core
 {
     /// <summary>
     /// 应用构建设置
@@ -11,13 +11,14 @@ namespace Azathrix.PackFlow
     public class AppBuildSettings : ScriptableSingleton<AppBuildSettings>
     {
         [Header("版本设置")]
-        public string versionFormat = "{major}.{minor}.{patch}";
-        public int majorVersion = 1;
-        public int minorVersion = 0;
-        public int patchVersion = 0;
-        public int buildNumber = 1;
+        [Tooltip("构建后自动递增版本")]
         public bool autoIncrementBuild = true;
         public VersionIncrementType autoIncrementType = VersionIncrementType.Build;
+
+        // 版本信息从框架配置读取
+        private AzathrixFrameworkSettings FrameworkSettings => AzathrixFrameworkSettings.Instance;
+        public string Version => FrameworkSettings?.Version ?? "1.0.0";
+        public string FullVersion => FrameworkSettings?.FullVersion ?? "1.0.0.1";
 
         [Header("Android 设置")]
         public bool androidExportProject;
@@ -36,38 +37,33 @@ namespace Azathrix.PackFlow
         public string customDefines;
         public bool buildAssetBeforeApp;
 
-        public string Version => versionFormat
-            .Replace("{major}", majorVersion.ToString())
-            .Replace("{minor}", minorVersion.ToString())
-            .Replace("{patch}", patchVersion.ToString())
-            .Replace("{build}", buildNumber.ToString());
-
-        public string FullVersion => $"{Version}.{buildNumber}";
-
         public void IncrementVersion()
         {
+            var settings = FrameworkSettings;
+            if (settings == null) return;
+
             switch (autoIncrementType)
             {
                 case VersionIncrementType.Build:
-                    buildNumber++;
+                    settings.buildNumber++;
                     break;
                 case VersionIncrementType.Patch:
-                    patchVersion++;
-                    buildNumber = 1;
+                    settings.patchVersion++;
+                    settings.buildNumber = 1;
                     break;
                 case VersionIncrementType.Minor:
-                    minorVersion++;
-                    patchVersion = 0;
-                    buildNumber = 1;
+                    settings.minorVersion++;
+                    settings.patchVersion = 0;
+                    settings.buildNumber = 1;
                     break;
                 case VersionIncrementType.Major:
-                    majorVersion++;
-                    minorVersion = 0;
-                    patchVersion = 0;
-                    buildNumber = 1;
+                    settings.majorVersion++;
+                    settings.minorVersion = 0;
+                    settings.patchVersion = 0;
+                    settings.buildNumber = 1;
                     break;
             }
-            Save(true);
+            settings.Save();
         }
 
         public void Save() => Save(true);

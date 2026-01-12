@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Editor.Attributes;
+using Editor.Interfaces;
 
-namespace Azathrix.PackFlow
+namespace Editor.Core
 {
     /// <summary>
     /// 构建管道基类

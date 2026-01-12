@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 
-namespace Azathrix.PackFlow
+namespace Editor.Core
 {
     /// <summary>
     /// 构建上下文，在构建步骤之间传递数据

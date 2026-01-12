@@ -1,4 +1,6 @@
-namespace Azathrix.PackFlow
+using Editor.Interfaces;
+
+namespace Editor.Core
 {
     /// <summary>
     /// 构建步骤基类

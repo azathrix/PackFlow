@@ -175,7 +175,23 @@ class LocalServerHandler(BaseHTTPRequestHandler):
     root_dir = "."
 
     def log_message(self, format, *args):
-        print(f"[{self.log_date_time_string()}] {format % args}", flush=True)
+        # 不打印默认的HTTP请求日志
+        pass
+
+    def log_operation(self, message):
+        """打印操作日志"""
+        print(f"[{self.log_date_time_string()}] {message}", flush=True)
+
+    def format_size(self, bytes):
+        """格式化文件大小"""
+        if bytes < 1024:
+            return f"{bytes} B"
+        elif bytes < 1024 * 1024:
+            return f"{bytes / 1024:.1f} KB"
+        elif bytes < 1024 * 1024 * 1024:
+            return f"{bytes / (1024 * 1024):.1f} MB"
+        else:
+            return f"{bytes / (1024 * 1024 * 1024):.1f} GB"
 
     def send_json(self, data, status=200):
         body = json.dumps(data, ensure_ascii=False).encode("utf-8")
@@ -241,6 +257,9 @@ class LocalServerHandler(BaseHTTPRequestHandler):
             self.send_header("Access-Control-Allow-Origin", "*")
             self.end_headers()
             self.wfile.write(data)
+            # 获取相对路径用于日志
+            rel_path = os.path.relpath(local_path, self.root_dir)
+            self.log_operation(f"下载文件: {rel_path}")
         except Exception as e:
             self.send_json({"error": str(e)}, 500)
 
@@ -266,6 +285,7 @@ class LocalServerHandler(BaseHTTPRequestHandler):
             with open(local_path, "wb") as f:
                 f.write(data)
             self.send_json({"success": True, "path": rel_path})
+            self.log_operation(f"上传文件: {rel_path} ({self.format_size(content_length)})")
         except Exception as e:
             self.send_json({"error": str(e)}, 500)
 
@@ -284,6 +304,7 @@ class LocalServerHandler(BaseHTTPRequestHandler):
             try:
                 os.makedirs(local_path, exist_ok=True)
                 self.send_json({"success": True})
+                self.log_operation(f"创建文件夹: {rel_path}")
             except Exception as e:
                 self.send_json({"error": str(e)}, 500)
             return
@@ -293,6 +314,7 @@ class LocalServerHandler(BaseHTTPRequestHandler):
 
     def do_DELETE(self):
         local_path = self.get_local_path(self.path)
+        rel_path = self.path.lstrip("/")
 
         if not local_path.startswith(os.path.normpath(self.root_dir)):
             self.send_json({"error": "Access denied"}, 403)
@@ -305,8 +327,10 @@ class LocalServerHandler(BaseHTTPRequestHandler):
         try:
             if os.path.isdir(local_path):
                 shutil.rmtree(local_path)
+                self.log_operation(f"删除文件夹: {rel_path}")
             else:
                 os.remove(local_path)
+                self.log_operation(f"删除文件: {rel_path}")
             self.send_json({"success": True})
         except Exception as e:
             self.send_json({"error": str(e)}, 500)

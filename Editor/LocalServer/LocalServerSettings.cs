@@ -1,8 +1,7 @@
-using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace Azathrix.PackFlow
+namespace Editor.LocalServer
 {
     /// <summary>
     /// 本地服务器配置

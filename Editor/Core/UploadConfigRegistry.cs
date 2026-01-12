@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Azathrix.PackFlow
+namespace Editor.Core
 {
     /// <summary>
     /// 上传配置注册表 - 支持多套上传配置的增删改

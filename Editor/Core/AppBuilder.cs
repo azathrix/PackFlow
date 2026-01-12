@@ -1,10 +1,10 @@
 using System;
 using System.IO;
+using Azathrix.Framework.Settings;
 using UnityEditor;
-using UnityEditor.Build.Reporting;
 using UnityEngine;
 
-namespace Azathrix.PackFlow
+namespace Editor.Core
 {
     /// <summary>
     /// 应用构建器
@@ -22,7 +22,7 @@ namespace Azathrix.PackFlow
                 // 设置版本号
                 PlayerSettings.bundleVersion = settings.Version;
                 if (target == BuildTarget.Android)
-                    PlayerSettings.Android.bundleVersionCode = settings.buildNumber;
+                    PlayerSettings.Android.bundleVersionCode = AzathrixFrameworkSettings.Instance.buildNumber;
 
                 // 构建选项
                 var options = BuildOptions.None;

@@ -1,9 +1,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Azathrix.Framework.Settings;
+using Editor.Attributes;
+using Editor.Core;
+using Editor.Interfaces;
 using UnityEditor;
 
-namespace Azathrix.PackFlow
+namespace Editor.Steps
 {
     /// <summary>
     /// 通用上传步骤
@@ -90,8 +94,10 @@ namespace Azathrix.PackFlow
             var bundleRoot = Path.GetDirectoryName(platformDir);
             var platform = Path.GetFileName(platformDir);
 
-            // 从 AppBuildSettings 获取版本号
-            var version = AppBuildSettings.instance.Version;
+            // 从框架配置获取版本号和项目ID
+            var frameworkSettings = AzathrixFrameworkSettings.Instance;
+            var version = frameworkSettings?.Version ?? "1.0.0";
+            var projectId = frameworkSettings?.projectId ?? "";
             var apiType = config.apiType.ToString().ToLower();
 
             context.Log($"上传 {packageNames.Count} 个资源包: {string.Join(", ", packageNames)}");
@@ -112,8 +118,8 @@ namespace Azathrix.PackFlow
                           $" --secret-key \"{config.secretKey}\"";
             }
 
-            if (!string.IsNullOrEmpty(config.projectId))
-                pyArgs += $" --project-id \"{config.projectId}\"";
+            if (!string.IsNullOrEmpty(projectId))
+                pyArgs += $" --project-id \"{projectId}\"";
 
             if (!string.IsNullOrEmpty(version))
                 pyArgs += $" --version \"{version}\"";

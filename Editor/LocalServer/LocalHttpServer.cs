@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using UnityEditor;
 
-namespace Azathrix.PackFlow
+namespace Editor.LocalServer
 {
     /// <summary>
     /// 本地 HTTP 服务器管理器（通过 Python 进程实现）

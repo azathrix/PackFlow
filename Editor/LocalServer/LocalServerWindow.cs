@@ -1,8 +1,9 @@
-using Azathrix.Framework.Tools;
+using System.Collections.Generic;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
-namespace Azathrix.PackFlow
+namespace Editor.LocalServer
 {
     /// <summary>
     /// 本地服务器控制窗口
@@ -13,11 +14,19 @@ namespace Azathrix.PackFlow
         private LocalServerSettings _settings;
         private static double _lastLogCheckTime;
 
+        // 日志相关
+        private static readonly List<string> _logs = new();
+        private static Vector2 _logScrollPos;
+        private static string _filterText = "";
+        private static bool _autoScroll = true;
+        private static bool _isAtBottom = true;
+        private const int MaxLogCount = 1000;
+
         [MenuItem("Azathrix/PackFlow/本地服务器", priority = 1001)]
         public static void ShowWindow()
         {
             var window = GetWindow<LocalServerWindow>("本地服务器");
-            window.minSize = new Vector2(400, 250);
+            window.minSize = new Vector2(400, 400);
         }
 
         private void OnEnable()
@@ -54,15 +63,13 @@ namespace Azathrix.PackFlow
 
         private static void PollServerLogs()
         {
-            // 每秒检查一次
-            if (EditorApplication.timeSinceStartup - _lastLogCheckTime < 1.0)
+            if (EditorApplication.timeSinceStartup - _lastLogCheckTime < 0.5)
                 return;
             _lastLogCheckTime = EditorApplication.timeSinceStartup;
 
             if (_server == null || !_server.IsRunning)
                 return;
 
-            // 检查是否启用日志显示
             if (!LocalServerSettings.instance.ShowLogs)
                 return;
 
@@ -70,28 +77,60 @@ namespace Azathrix.PackFlow
             if (string.IsNullOrEmpty(newLogs))
                 return;
 
-            // 按行输出日志
             var lines = newLogs.Split('\n');
             foreach (var line in lines)
             {
                 var trimmed = line.Trim();
                 if (!string.IsNullOrEmpty(trimmed))
-                    Log.Info($"[LocalServer] {trimmed}");
+                    AddLog(trimmed);
             }
+        }
+
+        private static void AddLog(string message)
+        {
+            // 简化日志格式
+            var time = System.DateTime.Now.ToString("HH:mm:ss");
+            _logs.Add($"[{time}] {message}");
+
+            // 限制日志数量
+            while (_logs.Count > MaxLogCount)
+                _logs.RemoveAt(0);
         }
 
         private void OnServerLog(string message)
         {
-            Log.Info($"[LocalServer] {message}");
+            AddLog(message);
+            Repaint();
         }
 
         private void OnGUI()
         {
-            EditorGUILayout.Space(10);
+            EditorGUILayout.Space(5);
 
             EnsureServerInstance();
 
-            // 状态
+            // 状态栏
+            DrawStatusBar();
+
+            EditorGUILayout.Space(5);
+
+            // 配置区域
+            DrawConfig();
+
+            EditorGUILayout.Space(5);
+
+            // 控制按钮
+            DrawControlButtons();
+
+            EditorGUILayout.Space(5);
+
+            // 日志区域
+            if (_settings.ShowLogs)
+                DrawLogArea();
+        }
+
+        private void DrawStatusBar()
+        {
             EditorGUILayout.BeginHorizontal();
             var isRunning = _server?.IsRunning ?? false;
             var statusColor = isRunning ? Color.green : Color.gray;
@@ -103,10 +142,12 @@ namespace Azathrix.PackFlow
                 GUILayout.Label($"http://localhost:{_settings.Port}/", EditorStyles.miniLabel);
 
             EditorGUILayout.EndHorizontal();
+        }
 
-            EditorGUILayout.Space(10);
+        private void DrawConfig()
+        {
+            var isRunning = _server?.IsRunning ?? false;
 
-            // 配置
             EditorGUILayout.LabelField("服务器配置", EditorStyles.boldLabel);
             EditorGUILayout.BeginVertical("box");
 
@@ -140,10 +181,12 @@ namespace Azathrix.PackFlow
                 _settings.ShowLogs = newShowLogs;
 
             EditorGUILayout.EndVertical();
+        }
 
-            EditorGUILayout.Space(10);
+        private void DrawControlButtons()
+        {
+            var isRunning = _server?.IsRunning ?? false;
 
-            // 控制按钮
             EditorGUILayout.BeginHorizontal();
             GUI.backgroundColor = isRunning ? Color.red : Color.green;
             if (GUILayout.Button(isRunning ? "停止服务器" : "启动服务器", GUILayout.Height(30)))
@@ -162,6 +205,90 @@ namespace Azathrix.PackFlow
             EditorGUILayout.EndHorizontal();
         }
 
+        private void DrawLogArea()
+        {
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("日志", EditorStyles.boldLabel, GUILayout.Width(30));
+
+            // 过滤
+            EditorGUILayout.LabelField("过滤:", GUILayout.Width(35));
+            _filterText = EditorGUILayout.TextField(_filterText, GUILayout.Width(100));
+
+            GUILayout.FlexibleSpace();
+
+            _autoScroll = GUILayout.Toggle(_autoScroll, "自动滚动", GUILayout.Width(70));
+
+            if (GUILayout.Button("复制", GUILayout.Width(45)))
+                CopyLogs();
+
+            if (GUILayout.Button("清空", GUILayout.Width(45)))
+                _logs.Clear();
+
+            EditorGUILayout.EndHorizontal();
+
+            // 日志显示区域
+            var logAreaRect = EditorGUILayout.BeginVertical("box", GUILayout.ExpandHeight(true));
+
+            _logScrollPos = EditorGUILayout.BeginScrollView(_logScrollPos);
+
+            var hasFilter = !string.IsNullOrEmpty(_filterText);
+            var filterLower = hasFilter ? _filterText.ToLower() : "";
+
+            foreach (var log in _logs)
+            {
+                if (hasFilter && !log.ToLower().Contains(filterLower))
+                    continue;
+
+                // 根据内容设置颜色
+                if (log.Contains("ERROR") || log.Contains("错误"))
+                    GUI.color = new Color(1f, 0.4f, 0.4f);
+                else if (log.Contains("WARN") || log.Contains("警告"))
+                    GUI.color = new Color(1f, 0.8f, 0.4f);
+                else
+                    GUI.color = Color.white;
+
+                EditorGUILayout.SelectableLabel(log, EditorStyles.miniLabel, GUILayout.Height(16));
+            }
+
+            GUI.color = Color.white;
+
+            EditorGUILayout.EndScrollView();
+
+            // 检测用户是否手动滚动（滚动位置变化但不是自动滚动导致的）
+            if (Event.current.type == EventType.Repaint)
+            {
+                // 计算内容高度和可视区域高度
+                var contentHeight = _logs.Count * 16f;
+                var viewHeight = logAreaRect.height - 10;
+                var maxScroll = Mathf.Max(0, contentHeight - viewHeight);
+
+                // 判断是否在底部（允许一定误差）
+                _isAtBottom = _logScrollPos.y >= maxScroll - 20;
+
+                // 只有开启自动滚动且在底部时才自动滚动
+                if (_autoScroll && _isAtBottom)
+                    _logScrollPos.y = float.MaxValue;
+            }
+
+            EditorGUILayout.EndVertical();
+        }
+
+        private void CopyLogs()
+        {
+            var sb = new StringBuilder();
+            var hasFilter = !string.IsNullOrEmpty(_filterText);
+            var filterLower = hasFilter ? _filterText.ToLower() : "";
+
+            foreach (var log in _logs)
+            {
+                if (hasFilter && !log.ToLower().Contains(filterLower))
+                    continue;
+                sb.AppendLine(log);
+            }
+
+            GUIUtility.systemCopyBuffer = sb.ToString();
+        }
+
         private void StartServer()
         {
             if (string.IsNullOrEmpty(_settings.RootDirectory))
@@ -177,6 +304,7 @@ namespace Azathrix.PackFlow
             };
             _server.OnLog += OnServerLog;
             _server.Start();
+            AddLog("服务器已启动");
         }
 
         private void StopServer()
@@ -184,6 +312,7 @@ namespace Azathrix.PackFlow
             _server?.Stop();
             _server?.Dispose();
             _server = null;
+            AddLog("服务器已停止");
         }
 
         [InitializeOnLoadMethod]
@@ -209,6 +338,7 @@ namespace Azathrix.PackFlow
                         RootDirectory = settings.RootDirectory
                     };
                     _server.Start();
+                    AddLog("服务器自动启动");
                 }
             };
         }

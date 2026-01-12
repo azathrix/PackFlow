@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Azathrix.PackFlow
+namespace Editor.Core
 {
     /// <summary>
     /// 构建结果
