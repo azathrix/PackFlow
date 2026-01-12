@@ -1,0 +1,18 @@
+﻿{
+    "name": "Azathrix.PackFlow.Editor",
+    "references": [
+        "Azathrix.Framework.Editor",
+        "Azathrix.Framework.Runtime"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
