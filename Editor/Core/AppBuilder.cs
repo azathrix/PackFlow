@@ -4,17 +4,17 @@ using Azathrix.Framework.Settings;
 using UnityEditor;
 using UnityEngine;
 
-namespace Editor.Core
+namespace Azathrix.PackFlow.Editor.Core
 {
     /// <summary>
     /// 应用构建器
     /// </summary>
     public static class AppBuilder
     {
-        public static BuildResult Build(BuildTarget target, bool exportProject = false)
+        public static PackFlowBuildResult Build(BuildTarget target, bool exportProject = false)
         {
             var settings = AppBuildSettings.instance;
-            var result = new BuildResult();
+            var result = new PackFlowBuildResult();
             var startTime = DateTime.Now;
 
             try

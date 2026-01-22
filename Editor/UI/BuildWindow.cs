@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Azathrix.Framework.Settings;
-using Editor.Core;
-using Editor.Interfaces;
-using Editor.Steps;
+using Azathrix.PackFlow.Editor.Core;
+using Azathrix.PackFlow.Editor.Interfaces;
+using Azathrix.PackFlow.Editor.Steps;
 using UnityEditor;
 using UnityEngine;
-using AndroidBuildType = Editor.Core.AndroidBuildType;
+using AndroidBuildType = Azathrix.PackFlow.Editor.Core.AndroidBuildType;
 
-namespace Editor.UI
+namespace Azathrix.PackFlow.Editor.UI
 {
     /// <summary>
     /// 管道注册器 - 用于注册构建管道
@@ -54,7 +54,7 @@ namespace Editor.UI
         private Vector2 _scrollPos;
 
         // 资源构建
-        private BuildContext _lastAssetContext;
+        private PackFlowBuildContext _lastAssetContext;
         private bool _isAssetBuilding;
 
         // 管道和步骤的折叠状态
@@ -311,7 +311,7 @@ namespace Editor.UI
             var enabledPipelines = PipelineRegistry.GetEnabled().ToList();
             if (enabledPipelines.Count == 0) return;
 
-            _lastAssetContext = new BuildContext
+            _lastAssetContext = new PackFlowBuildContext
             {
                 BuildTarget = EditorUserBuildSettings.activeBuildTarget,
                 DoUpload = upload,
@@ -360,7 +360,7 @@ namespace Editor.UI
             var enabledPipelines = PipelineRegistry.GetEnabled().ToList();
             if (enabledPipelines.Count == 0) return;
 
-            _lastAssetContext = new BuildContext
+            _lastAssetContext = new PackFlowBuildContext
             {
                 BuildTarget = EditorUserBuildSettings.activeBuildTarget,
                 DoUpload = true,

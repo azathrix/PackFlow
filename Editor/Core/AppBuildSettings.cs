@@ -2,7 +2,7 @@ using Azathrix.Framework.Settings;
 using UnityEditor;
 using UnityEngine;
 
-namespace Editor.Core
+namespace Azathrix.PackFlow.Editor.Core
 {
     /// <summary>
     /// 应用构建设置

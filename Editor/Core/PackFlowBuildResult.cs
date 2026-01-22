@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 
-namespace Editor.Core
+namespace Azathrix.PackFlow.Editor.Core
 {
     /// <summary>
     /// 构建结果
     /// </summary>
-    public class BuildResult
+    public class PackFlowBuildResult
     {
         /// <summary>
         /// 是否成功
@@ -37,14 +37,14 @@ namespace Editor.Core
         /// </summary>
         public string OutputPath { get; set; }
 
-        public static BuildResult Succeed()
+        public static PackFlowBuildResult Succeed()
         {
-            return new BuildResult { Success = true };
+            return new PackFlowBuildResult { Success = true };
         }
 
-        public static BuildResult Failed(string stepName, string error)
+        public static PackFlowBuildResult Failed(string stepName, string error)
         {
-            return new BuildResult
+            return new PackFlowBuildResult
             {
                 Success = false,
                 FailedStep = stepName,

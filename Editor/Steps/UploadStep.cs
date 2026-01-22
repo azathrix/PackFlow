@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using Azathrix.Framework.Settings;
-using Editor.Attributes;
-using Editor.Core;
-using Editor.Interfaces;
+using Azathrix.PackFlow.Editor.Attributes;
+using Azathrix.PackFlow.Editor.Core;
+using Azathrix.PackFlow.Editor.Interfaces;
 using UnityEditor;
 
-namespace Editor.Steps
+namespace Azathrix.PackFlow.Editor.Steps
 {
     /// <summary>
     /// 通用上传步骤
@@ -37,7 +37,7 @@ namespace Editor.Steps
             _pipeline.DrawUploadConfigGUI();
         }
 
-        public bool Execute(BuildContext context)
+        public bool Execute(PackFlowBuildContext context)
         {
             if (!context.DoUpload)
             {

@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using UnityEditor;
 
-namespace Editor.Core
+namespace Azathrix.PackFlow.Editor.Core
 {
     /// <summary>
     /// 构建上下文，在构建步骤之间传递数据
     /// </summary>
-    public class BuildContext
+    public class PackFlowBuildContext
     {
         /// <summary>
         /// 构建目标平台

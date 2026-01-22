@@ -1,6 +1,6 @@
-using Editor.Interfaces;
+using Azathrix.PackFlow.Editor.Interfaces;
 
-namespace Editor.Core
+namespace Azathrix.PackFlow.Editor.Core
 {
     /// <summary>
     /// 构建步骤基类
@@ -14,6 +14,6 @@ namespace Editor.Core
 
         public virtual void DrawConfigGUI() { }
 
-        public abstract bool Execute(BuildContext context);
+        public abstract bool Execute(PackFlowBuildContext context);
     }
 }

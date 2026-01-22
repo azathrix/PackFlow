@@ -1,9 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using Editor.Interfaces;
+using Azathrix.PackFlow.Editor.Interfaces;
 
-namespace Editor.Core
+namespace Azathrix.PackFlow.Editor.Core
 {
     /// <summary>
     /// 构建管道执行器
@@ -13,9 +13,9 @@ namespace Editor.Core
         /// <summary>
         /// 执行构建管道
         /// </summary>
-        public static BuildResult Run(IBuildPipeline pipeline, BuildContext context)
+        public static PackFlowBuildResult Run(IBuildPipeline pipeline, PackFlowBuildContext context)
         {
-            var result = new BuildResult { Success = true };
+            var result = new PackFlowBuildResult { Success = true };
             var totalStopwatch = Stopwatch.StartNew();
 
             context.Log($"========== 开始执行管道: {pipeline.Name} ==========");

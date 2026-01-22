@@ -1,8 +1,8 @@
-using Editor.Core;
+using Azathrix.PackFlow.Editor.Core;
 using UnityEditor;
 using UnityEngine;
 
-namespace Editor.UI
+namespace Azathrix.PackFlow.Editor.UI
 {
     /// <summary>
     /// 上传配置编辑窗口

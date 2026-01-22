@@ -1,6 +1,6 @@
 using System;
 
-namespace Editor.Core
+namespace Azathrix.PackFlow.Editor.Core
 {
     /// <summary>
     /// 上传 API 类型

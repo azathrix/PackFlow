@@ -1,6 +1,6 @@
-using Editor.Core;
+using Azathrix.PackFlow.Editor.Core;
 
-namespace Editor.Interfaces
+namespace Azathrix.PackFlow.Editor.Interfaces
 {
     /// <summary>
     /// 构建步骤接口
@@ -37,6 +37,6 @@ namespace Editor.Interfaces
         /// </summary>
         /// <param name="context">构建上下文</param>
         /// <returns>是否成功</returns>
-        bool Execute(BuildContext context);
+        bool Execute(PackFlowBuildContext context);
     }
 }

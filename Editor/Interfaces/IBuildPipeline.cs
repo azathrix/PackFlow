@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Editor.Core;
+using Azathrix.PackFlow.Editor.Core;
 
-namespace Editor.Interfaces
+namespace Azathrix.PackFlow.Editor.Interfaces
 {
     /// <summary>
     /// 构建管道接口
@@ -41,7 +41,7 @@ namespace Editor.Interfaces
         /// <summary>
         /// 执行构建管道
         /// </summary>
-        BuildResult Execute(BuildContext context);
+        PackFlowBuildResult Execute(PackFlowBuildContext context);
 
         /// <summary>
         /// 绘制配置界面
@@ -51,7 +51,7 @@ namespace Editor.Interfaces
         /// <summary>
         /// 获取需要上传的目录列表（用于仅上传功能）
         /// </summary>
-        IReadOnlyList<string> GetUploadDirectories(BuildContext context);
+        IReadOnlyList<string> GetUploadDirectories(PackFlowBuildContext context);
 
         /// <summary>
         /// 获取此管线使用的上传配置

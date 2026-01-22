@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Editor.Attributes;
-using Editor.Interfaces;
+using Azathrix.PackFlow.Editor.Attributes;
+using Azathrix.PackFlow.Editor.Interfaces;
 
-namespace Editor.Core
+namespace Azathrix.PackFlow.Editor.Core
 {
     /// <summary>
     /// 构建管道基类
@@ -112,7 +112,7 @@ namespace Editor.Core
             _steps.RemoveAll(s => s.Name == stepName);
         }
 
-        public BuildResult Execute(BuildContext context)
+        public PackFlowBuildResult Execute(PackFlowBuildContext context)
         {
             return BuildPipelineRunner.Run(this, context);
         }
@@ -122,7 +122,7 @@ namespace Editor.Core
             // 子类重写以绘制配置界面
         }
 
-        public virtual IReadOnlyList<string> GetUploadDirectories(BuildContext context)
+        public virtual IReadOnlyList<string> GetUploadDirectories(PackFlowBuildContext context)
         {
             // 子类重写以返回需要上传的目录列表
             return new List<string>();

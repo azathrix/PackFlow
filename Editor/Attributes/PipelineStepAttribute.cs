@@ -1,7 +1,7 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace Editor.Attributes
+namespace Azathrix.PackFlow.Editor.Attributes
 {
     /// <summary>
     /// 标记Step适用的Pipeline
