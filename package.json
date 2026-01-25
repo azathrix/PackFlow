@@ -1,13 +1,13 @@
 ﻿{
     "name": "com.azathrix.pack-flow",
     "displayName": "Pack Flow",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "unity": "6000.3",
     "description": "\u7528\u4e8e\u6784\u5efa\u6253\u5305\u548c\u4e0a\u4f20\u7b49\u670d\u52a1\u5de5\u5177\u3002",
     "author": {
         "name": "Azathrix"
     },
     "dependencies": {
-        "com.azathrix.framework": "0.0.5"
+        "com.azathrix.framework": "0.0.8"
     }
 }
